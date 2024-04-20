@@ -1,0 +1,16 @@
+server:
+  port: 80
+spring:
+  application:
+    name: qiyu-live-gateway
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 192.168.138.1:8848
+        namespace: qiyu-live-test
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
