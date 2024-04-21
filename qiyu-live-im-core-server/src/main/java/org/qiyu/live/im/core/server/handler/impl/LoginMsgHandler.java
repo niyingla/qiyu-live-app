@@ -2,26 +2,35 @@ package org.qiyu.live.im.core.server.handler.impl;
 
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
+import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.qiyu.live.im.constants.AppIdEnum;
+import org.qiyu.live.im.constants.ImConstants;
 import org.qiyu.live.im.constants.ImMsgCodeEnum;
 import org.qiyu.live.im.core.server.common.ChannelHandlerContextCache;
 import org.qiyu.live.im.core.server.common.ImContextAttr;
 import org.qiyu.live.im.core.server.common.ImContextUtils;
 import org.qiyu.live.im.core.server.common.ImMsg;
 import org.qiyu.live.im.core.server.handler.SimplyHandler;
+import org.qiyu.live.im.core.server.interfaces.constans.ImCoreServerConstants;
 import org.qiyu.live.im.dto.ImMsgBody;
 import org.qiyu.live.im.interfaces.ImTokenRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class LoginMsgHandler implements SimplyHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginMsgHandler.class);
     @DubboReference
     private ImTokenRpc imTokenRpc;
+
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     /**
      * 想要建立连接的话，我们需要进行一系列的参数校验，
@@ -36,7 +45,7 @@ public class LoginMsgHandler implements SimplyHandler {
         byte[] body = imMsg.getBody();
         if (body == null || body.length == 0) {
             ctx.close();
-            LOGGER.error("body error, imMsg is {}", imMsg);
+            LOGGER.error("body error, imMsgBody is {}", new String(imMsg.getBody()));
             throw new IllegalArgumentException("body error");
         }
         String s = new String(body);
@@ -48,7 +57,7 @@ public class LoginMsgHandler implements SimplyHandler {
         Integer appId = imMsgBody.getAppId();
         if (StringUtils.isEmpty(token) || userIdFromMsg < 10000 || appId < 10000) {
             ctx.close();
-            LOGGER.error("param error, imMsg is {}", imMsg);
+            LOGGER.error("body error, imMsgBody is {}", new String(imMsg.getBody()));
             throw new IllegalArgumentException("param error");
         }
         Long userId = imTokenRpc.getUserIdByToken(token);
@@ -65,6 +74,10 @@ public class LoginMsgHandler implements SimplyHandler {
             respBody.setUserId(userId);
             respBody.setData("true");
             ImMsg respMsg = ImMsg.build(ImMsgCodeEnum.IM_LOGIN_MSG.getCode(), JSON.toJSONString(respBody));
+            System.out.println("login set ip="+ChannelHandlerContextCache.getServerIpAddress());
+            stringRedisTemplate.opsForValue().set(ImCoreServerConstants.IM_BIND_IP_KEY + appId + ":" + userId,
+                    ChannelHandlerContextCache.getServerIpAddress(),
+                    ImConstants.DEFAULT_HEART_BEAT_GAP*2, TimeUnit.SECONDS);
             LOGGER.info("[LoginMsgHandler] login success, userId is {}, appId is {}", userId, appId);
             ctx.writeAndFlush(respMsg);
             return;

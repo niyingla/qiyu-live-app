@@ -12,11 +12,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableDubbo
-public class ImRouterProviderApplication implements CommandLineRunner {
+public class ImRouterProviderApplication  implements CommandLineRunner{
     @Resource
     private ImRouterService imRouterService;
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         SpringApplication springApplication = new SpringApplication(ImRouterProviderApplication.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.run(args);

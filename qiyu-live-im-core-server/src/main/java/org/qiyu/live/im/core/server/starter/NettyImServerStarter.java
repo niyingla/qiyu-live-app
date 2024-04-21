@@ -1,6 +1,7 @@
 package org.qiyu.live.im.core.server.starter;
 
 import io.netty.channel.nio.NioEventLoopGroup;
+import org.qiyu.live.im.core.server.common.ChannelHandlerContextCache;
 import org.qiyu.live.im.core.server.common.ImMsgDecoder;
 import org.qiyu.live.im.core.server.common.ImMsgEncoder;
 import org.qiyu.live.im.core.server.handler.ImServerCoreHandler;
@@ -15,6 +16,11 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import jakarta.annotation.Resource;
+import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @Configuration
 public class NettyImServerStarter implements InitializingBean {
@@ -26,6 +32,9 @@ public class NettyImServerStarter implements InitializingBean {
     private int port;
     @Resource
     ImServerCoreHandler imServerCoreHandler;
+
+    @Resource
+    Environment environment;
 
     
     //基于Netty去启动一个java进程，绑定监听的端口
@@ -60,7 +69,16 @@ public class NettyImServerStarter implements InitializingBean {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }));
-        LOGGER.info("初始化连接渠道NettyImServerStarter4");
+        //            String registryIp = InetAddress.getLocalHost().getHostAddress();
+        String registryIp = environment.getProperty("DUBBO_IP_TO_REGISTRY");//部署时我们使用这条语句获取ip地址
+        String registryPort = environment.getProperty("DUBBO_PORT_TO_REGISTRY");
+        System.out.println(registryIp + ":" + registryPort);
+        if(StringUtils.isEmpty(registryIp) || StringUtils.isEmpty(registryPort)) {
+            throw new IllegalArgumentException("启动参数中的注册端口和注册ip不能为空");
+        }
+        ChannelHandlerContextCache.setServerIpAddress(registryIp + ":" + registryPort);
+        System.out.println(ChannelHandlerContextCache.getServerIpAddress());
+        LOGGER.info("Netty服务启动成功，机器启动ip和dubbo服务端口为{}", registryIp + ":" + registryPort);
         ChannelFuture channelFuture = bootstrap.bind(port).sync();
         LOGGER.info("Netty服务启动成功，监听端口为{}", port);
         //这里会阻塞主线程，实现服务长期开启的效果

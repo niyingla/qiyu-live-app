@@ -9,10 +9,12 @@ import org.qiyu.live.im.constants.ImMsgCodeEnum;
 import org.qiyu.live.im.core.server.common.ImContextUtils;
 import org.qiyu.live.im.core.server.common.ImMsg;
 import org.qiyu.live.im.core.server.handler.SimplyHandler;
+import org.qiyu.live.im.core.server.interfaces.constans.ImCoreServerConstants;
 import org.qiyu.live.im.dto.ImMsgBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -27,13 +29,16 @@ public class HeartBeatImMsgHandler implements SimplyHandler {
     @Resource
     ImCoreServerProviderCacheKeyBuilder cacheKeyBuilder;
 
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
+
     @Override
     public void handler(ChannelHandlerContext ctx, ImMsg imMsg) {
         //心跳包基本校验
         Long userId= ImContextUtils.getUserId(ctx);
         Integer appId = ImContextUtils.getAppId(ctx);
         if(userId==null||appId==null){
-            LOGGER.error("attr error,imMsg is {}", imMsg);
+            LOGGER.error("body error, imMsgBody is {}", new String(imMsg.getBody()));
             ctx.close();
             throw new IllegalArgumentException("参数attr错误");
         }
@@ -43,6 +48,7 @@ public class HeartBeatImMsgHandler implements SimplyHandler {
         this.recordOnlineTime(userId, redisKey);
         this.removeExpireRecord(redisKey);
         redisTemplate.expire(redisKey,5, TimeUnit.MINUTES);
+        stringRedisTemplate.expire(ImCoreServerConstants.IM_BIND_IP_KEY + appId + ":" + userId,ImConstants.DEFAULT_HEART_BEAT_GAP*2,TimeUnit.SECONDS);
         ImMsgBody msgBody = new ImMsgBody();
         msgBody.setUserId(userId);
         msgBody.setAppId(appId);

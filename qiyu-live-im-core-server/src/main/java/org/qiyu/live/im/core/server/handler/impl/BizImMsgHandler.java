@@ -37,7 +37,7 @@ public class BizImMsgHandler implements SimplyHandler {
         }
         byte[] body = imMsg.getBody();
         if (body == null || body.length == 0) {
-            LOGGER.error("body error ,imMsg is {}", imMsg);
+            LOGGER.error("body error, imMsgBody is {}", new String(imMsg.getBody()));
             return;
         }
         Message message = new Message();
