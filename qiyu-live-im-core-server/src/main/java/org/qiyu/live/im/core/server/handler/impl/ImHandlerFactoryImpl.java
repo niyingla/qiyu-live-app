@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 public class ImHandlerFactoryImpl implements ImHandlerFactory, InitializingBean {
 
-    private static Map<Integer, SimplyHandler> simplyHandlerMap = new HashMap<>();
+    private static final Map<Integer, SimplyHandler> simplyHandlerMap = new HashMap<>();
     @Resource
     private ApplicationContext applicationContext;
 
@@ -37,7 +37,8 @@ public class ImHandlerFactoryImpl implements ImHandlerFactory, InitializingBean 
         //心跳消息包，定时会给im发送，汇报功能
         simplyHandlerMap.put(ImMsgCodeEnum.IM_LOGIN_MSG.getCode(),applicationContext.getBean(LoginMsgHandler.class));
         simplyHandlerMap.put(ImMsgCodeEnum.IM_LOGOUT_MSG.getCode(), applicationContext.getBean(LogoutMsgHandler.class));
-        simplyHandlerMap.put(ImMsgCodeEnum.IM_BIZ_MSG.getCode(),applicationContext.getBean(BizImMsgHandler.class));
-        simplyHandlerMap.put(ImMsgCodeEnum.IM_HEARTBEAT_MSG.getCode(), applicationContext.getBean(HeartBeatImMsgHandler.class) );
+        simplyHandlerMap.put(ImMsgCodeEnum.IM_BIZ_MSG.getCode(), applicationContext.getBean(BizImMsgHandler.class));
+        simplyHandlerMap.put(ImMsgCodeEnum.IM_HEARTBEAT_MSG.getCode(), applicationContext.getBean(HeartBeatImMsgHandler.class));
+        simplyHandlerMap.put(ImMsgCodeEnum.IM_ACK_MSG.getCode(), applicationContext.getBean(AckImMsgHandler.class));
     }
 }

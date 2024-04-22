@@ -6,8 +6,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import jakarta.annotation.Resource;
 import org.qiyu.live.im.core.server.common.ChannelHandlerContextCache;
 import org.qiyu.live.im.core.server.common.ImContextAttr;
+import org.qiyu.live.im.core.server.common.ImContextUtils;
 import org.qiyu.live.im.core.server.common.ImMsg;
 import org.qiyu.live.im.core.server.handler.impl.ImHandlerFactoryImpl;
+import org.qiyu.live.im.core.server.interfaces.constans.ImCoreServerConstants;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +19,8 @@ public class ImServerCoreHandler extends SimpleChannelInboundHandler {
 
     @Resource
     ImHandlerFactory imHandlerFactory;
+    @Resource
+    RedisTemplate<String, Object> redisTemplate;
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
@@ -33,8 +38,12 @@ public class ImServerCoreHandler extends SimpleChannelInboundHandler {
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        Long userId = ctx.attr(ImContextAttr.USER_ID).get();
-        ChannelHandlerContextCache.remove(userId);
+        Long userId = ImContextUtils.getUserId(ctx);
+        Integer appId = ImContextUtils.getAppId(ctx);
+        if(userId!=null&&appId!=null){
+            ChannelHandlerContextCache.remove(userId);
+            redisTemplate.delete(ImCoreServerConstants.IM_BIND_IP_KEY+appId+":"+userId);
+        }
     }
 }
 

@@ -3,6 +3,7 @@ package org.qiyu.live.im.provider;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.qiyu.live.im.constants.AppIdEnum;
+import org.qiyu.live.im.provider.service.ImOnlineService;
 import org.qiyu.live.im.provider.service.ImTokenService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableDubbo
 public class ImProviderApplication implements CommandLineRunner {
     @Resource
-    private ImTokenService imTokenService;
+    private ImOnlineService onlineService;
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(ImProviderApplication.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
@@ -22,12 +23,8 @@ public class ImProviderApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        long userid=10921312L;
-        String token = imTokenService.createImLoginToken(userid, AppIdEnum.QIYU_LIVE_BIZ.getCode());
-        System.out.println("token is="+token);
-        Long userIdByToken = imTokenService.getUserIdByToken(token);
-        System.out.println("userIdByToken is="+userIdByToken);
-
-
+        for(int i = 0; i < 10; i++) {
+            System.out.println(onlineService.isOnline(1001L + i, AppIdEnum.QIYU_LIVE_BIZ.getCode()));
+        }
     }
 }

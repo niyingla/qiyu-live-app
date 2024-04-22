@@ -54,7 +54,13 @@
             <artifactId>qiyu-live-im-interface</artifactId>
             <version>${qiyu-live-im-interface.version}</version>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>org.idea</groupId>
+            <artifactId>qiyu-live-im-core-server-interface</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--        <dependency>-->
 <!--            <groupId>org.idea</groupId>-->
 <!--            <artifactId>qiyu-live-im-core-server-interfaces</artifactId>-->
 <!--            <version>1.0-SNAPSHOT</version>-->

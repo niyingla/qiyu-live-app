@@ -13,13 +13,17 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ImMsg imMsg = (ImMsg) msg;
         if (imMsg.getCode() == ImMsgCodeEnum.IM_BIZ_MSG.getCode()) {
-            ImMsgBody respBody = JSON.parseObject(new String(imMsg.getBody()), ImMsgBody.class);
+            //是业务消息，就要发回ACK
+            ImMsgBody imMsgBody = JSON.parseObject(new String(imMsg.getBody()), ImMsgBody.class);
             ImMsgBody ackBody = new ImMsgBody();
-            ackBody.setAppId(respBody.getAppId());
-            ackBody.setUserId(respBody.getUserId());
+            ackBody.setUserId(imMsgBody.getUserId());
+            ackBody.setAppId(imMsgBody.getAppId());
+            ackBody.setMsgId(imMsgBody.getMsgId());
             ImMsg ackMsg = ImMsg.build(ImMsgCodeEnum.IM_ACK_MSG.getCode(), JSON.toJSONString(ackBody));
+            System.out.println(ackMsg.toString());
             ctx.writeAndFlush(ackMsg);
         }
-        System.out.println("【服务端响应数据】result is " + new String(imMsg.getBody()));
+        System.out.println("【服务端响应数据】 result is " + new String(imMsg.getBody()));
     }
 }
+

@@ -21,6 +21,17 @@ public class ImMsgBody implements Serializable {
      * 从业务服务中获取，用于在im服务建立连接时使用，从中获取userId与userId进行比较
      */
     private String token;
+
+    private String msgId;
+
+    public String getMsgId() {
+        return msgId;
+    }
+
+    public void setMsgId(String msgId) {
+        this.msgId = msgId;
+    }
+
     /**
      * 业务类型标识
      */
@@ -36,6 +47,7 @@ public class ImMsgBody implements Serializable {
                 "appId=" + appId +
                 ", userId=" + userId +
                 ", token='" + token + '\'' +
+                ", msgId='" + msgId + '\'' +
                 ", bizCode=" + bizCode +
                 ", data='" + data + '\'' +
                 '}';
