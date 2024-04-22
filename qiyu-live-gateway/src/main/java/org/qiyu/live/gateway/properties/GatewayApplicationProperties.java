@@ -6,11 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-/**
- * @Author idea
- * @Date: Created in 11:33 2023/6/20
- * @Description
- */
+
 @ConfigurationProperties(prefix = "qiyu.gateway")
 @Configuration
 @RefreshScope

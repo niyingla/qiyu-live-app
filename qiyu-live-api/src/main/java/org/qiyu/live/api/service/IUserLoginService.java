@@ -3,11 +3,7 @@ package org.qiyu.live.api.service;
 import jakarta.servlet.http.HttpServletResponse;
 import org.qiyu.live.common.interfaces.vo.WebResponseVO;
 
-/**
- * @Author idea
- * @Date: Created in 10:50 2023/6/15
- * @Description
- */
+
 public interface IUserLoginService {
 
     /**
