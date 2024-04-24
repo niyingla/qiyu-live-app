@@ -5,3 +5,4 @@ org.idea.qiyu.live.framework.redis.starter.key.AccountProviderCacheKeyBuilder
 org.idea.qiyu.live.framework.redis.starter.key.ImProviderCacheKeyBuilder
 org.idea.qiyu.live.framework.redis.starter.key.ImCoreServerProviderCacheKeyBuilder
 org.idea.qiyu.live.framework.redis.starter.key.LivingProviderCacheKeyBuilder
+org.idea.qiyu.live.framework.redis.starter.key.GiftProviderCacheKeyBuilder

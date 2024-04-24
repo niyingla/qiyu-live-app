@@ -32,7 +32,6 @@ public class HomePageController {
     @PostMapping("/initPage")
     public WebResponseVO initPage() {
         Long userId = QiyuRequestContext.getUserId();
-        System.out.println("userId="+userId);
         HomePageVO homePageVO = new HomePageVO();
         homePageVO.setLoginStatus(false);
         if (userId != null) {

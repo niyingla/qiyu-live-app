@@ -2,9 +2,9 @@ package org.qiyu.live.api.service.impl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.qiyu.live.account.interfaces.rpc.IAccountTokenRPC;
+import org.qiyu.live.api.error.QiyuApiError;
 import org.qiyu.live.api.service.IUserLoginService;
 import org.qiyu.live.api.vo.UserLoginVO;
 import org.qiyu.live.common.interfaces.ConvertBeanUtils;
@@ -14,6 +14,7 @@ import org.qiyu.live.msg.enums.MsgSendResultEnum;
 import org.qiyu.live.msg.interfaces.ISmsRpc;
 import org.qiyu.live.user.dto.UserLoginDTO;
 import org.qiyu.live.user.interfaces.rpc.IUserPhoneRPC;
+import org.qiyu.live.web.starter.error.ErrorAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,35 +40,20 @@ public class UserLoginServiceImpl implements IUserLoginService {
 
     @Override
     public WebResponseVO sendLoginCode(String phone) {
-
-        // 参数校验
-        if (StringUtils.isEmpty(phone)) {
-            return WebResponseVO.errorParam("手机号不能为空");
-        }
-        if (!Pattern.matches(PHONE_REG, phone)) {
-            return WebResponseVO.errorParam("手机号格式错误");
-        }
+        ErrorAssert.isNotBlank(phone, QiyuApiError.PHONE_NOT_BLANK);
+        ErrorAssert.isTure(Pattern.matches(PHONE_REG, phone), QiyuApiError.PHONE_IN_VALID);
         MsgSendResultEnum msgSendResultEnum = smsRpc.sendLoginCode(phone);
         if (msgSendResultEnum == MsgSendResultEnum.SEND_SUCCESS) {
             return WebResponseVO.success();
         }
         return WebResponseVO.sysError("短信发送太频繁，请稍后再试");
-
     }
 
     @Override
     public WebResponseVO login(String phone, Integer code, HttpServletResponse response) {
-
-        if (StringUtils.isEmpty(phone)) {
-            return WebResponseVO.errorParam("手机号不能为空");
-
-        }
-        if (!Pattern.matches(PHONE_REG, phone)) {
-            return WebResponseVO.errorParam("手机格式异常");
-        }
-        if (code == null || code < 1000) {
-            return WebResponseVO.errorParam("验证码格式异常");
-        }
+        ErrorAssert.isNotBlank(phone, QiyuApiError.PHONE_NOT_BLANK);
+        ErrorAssert.isTure(Pattern.matches(PHONE_REG, phone), QiyuApiError.PHONE_IN_VALID);
+        ErrorAssert.isTure(code != null && code > 1000, QiyuApiError.LOGIN_CODE_IN_VALID);
         MsgCheckDTO msgCheckDTO = smsRpc.checkLoginCode(phone, code);
 
         if (!msgCheckDTO.isCheckStatus()) {
