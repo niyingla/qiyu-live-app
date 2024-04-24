@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableDubbo
-public class ImRouterProviderApplication  implements CommandLineRunner{
+public class ImRouterProviderApplication{
     @Resource
     private ImRouterService imRouterService;
 
@@ -23,13 +23,4 @@ public class ImRouterProviderApplication  implements CommandLineRunner{
     }
 
 
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println("开始执行run方法：--------------");
-        for (int i = 0; i < 1000; i++) {
-            ImMsgBody imMsgBody = new ImMsgBody();
-            imRouterService.sendMsg(imMsgBody);
-            Thread.sleep(1000);
-        }
-    }
 }

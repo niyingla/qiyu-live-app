@@ -19,4 +19,5 @@ public class LivingRoomInitVO {
     //默认背景图，为了方便讲解使用
     private String defaultBgImg;
     private Long pkObjId;
+    private String nickName;
 }

@@ -1,12 +1,34 @@
 package org.qiyu.live.living.provider.service;
 
 import org.qiyu.live.common.interfaces.dto.PageWrapper;
+import org.qiyu.live.im.core.server.interfaces.dto.ImOfflineDTO;
+import org.qiyu.live.im.core.server.interfaces.dto.ImOnlineDTO;
 import org.qiyu.live.living.interfaces.dto.LivingRoomReqDTO;
 import org.qiyu.live.living.interfaces.dto.LivingRoomRespDTO;
 
 import java.util.List;
 
 public interface ILivingRoomService {
+
+    /**
+     * 根据roomId查询出批量的userId
+     * @param livingRoomReqDTO
+     * @return
+     */
+    List<Long> queryUserIdsByRoomId(LivingRoomReqDTO livingRoomReqDTO);
+
+    /**
+     * 用户下线处理
+     * @param imOfflineDTO
+     */
+    void userOfflineHandler(ImOfflineDTO imOfflineDTO);
+
+    /**
+     * 用户上线处理
+     * @param imOnlineDTO
+     */
+    void userOnlineHandler(ImOnlineDTO imOnlineDTO);
+
     /**
      * 分页查询
      * @param livingRoomReqDTO

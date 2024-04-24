@@ -80,8 +80,6 @@ public class UserLoginServiceImpl implements IUserLoginService {
         }
         String token = accountTokenRPC.createAndSaveLoginToken(login.getUserId());
         Cookie cookie = new Cookie("qytk", token);
-        System.out.println("cookie==================>" + cookie.getValue());
-        System.out.println(cookie);
         cookie.setDomain("127.0.0.1");
         cookie.setPath("/");
         //cookie有效期，一般他的默认单位是秒
@@ -92,7 +90,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
         // 服务端代码
 //        response.setHeader("Access-Control-Allow-Origin", "*");
 //        response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE,PATCH");
-        System.out.println("last--------->" + response.getHeader("Access-Control-Allow-Origin"));
+
         return WebResponseVO.success(ConvertBeanUtils.convert(login, UserLoginVO.class));
 
 

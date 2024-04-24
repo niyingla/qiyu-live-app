@@ -21,14 +21,12 @@ public class UserLoginController {
 
     //发送验证码
     @PostMapping("/sendLoginCode")
-    public WebResponseVO sendLoginCode(String phone) {
-        System.out.println("调用sendLoginCode");return userLoginService.sendLoginCode(phone);
+    public WebResponseVO sendLoginCode(String phone) {return userLoginService.sendLoginCode(phone);
     }
 
     //登录请求 验证码是否合法 -> 初始化注册/老用户登录
     @PostMapping("/login")
     public WebResponseVO login(String phone, Integer code, HttpServletResponse response) {
-        System.out.println("response--------------》"+response);
         return userLoginService.login(phone, code, response);
     }
 

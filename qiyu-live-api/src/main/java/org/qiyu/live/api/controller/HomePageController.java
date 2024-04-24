@@ -31,12 +31,11 @@ public class HomePageController {
 
     @PostMapping("/initPage")
     public WebResponseVO initPage() {
-        System.out.println("进入initPage");
         Long userId = QiyuRequestContext.getUserId();
+        System.out.println("userId="+userId);
         HomePageVO homePageVO = new HomePageVO();
         homePageVO.setLoginStatus(false);
         if (userId != null) {
-            System.out.println("进入initPage2");
             homePageVO = homePageService.initPage(userId);
             homePageVO.setLoginStatus(true);
         }

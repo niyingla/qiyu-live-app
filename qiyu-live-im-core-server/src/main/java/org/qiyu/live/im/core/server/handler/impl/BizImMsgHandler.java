@@ -40,8 +40,10 @@ public class BizImMsgHandler implements SimplyHandler {
             LOGGER.error("body error,imMsg is {}", imMsg);
             return;
         }
+        System.out.println("BizImMsgHandler::msg::"+imMsg);
         Message message = new Message();
         message.setTopic(ImCoreServerProviderTopicNames.QIYU_LIVE_IM_BIZ_MSG_TOPIC);
+
         message.setBody(body);
         try {
             SendResult sendResult = mqProducer.send(message);

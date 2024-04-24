@@ -20,9 +20,7 @@ public class UserController {
 
     @GetMapping(value = "/getUsesrInfo")
     public UserDTO getUsesrInfo(Long id){
-        System.out.println("1223");
         UserDTO userDTO=userRpc.getByUserId(id);
-        System.out.println(userDTO==null?true:false);
         return userDTO;
     }
 

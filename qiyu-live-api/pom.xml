@@ -91,6 +91,12 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.idea</groupId>
+            <artifactId>qiyu-live-im-interface</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <!--        <dependency>-->
 <!--            <groupId>org.idea</groupId>-->
 <!--            <artifactId>qiyu-live-im-interface</artifactId>-->

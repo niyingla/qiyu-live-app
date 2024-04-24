@@ -8,12 +8,19 @@ import org.qiyu.live.living.interfaces.dto.LivingRoomRespDTO;
 import org.qiyu.live.living.interfaces.rpc.ILivingRoomRpc;
 import org.qiyu.live.living.provider.service.ILivingRoomService;
 
+import java.util.List;
+
 @DubboService
 public class LivingRoomRpcImpl implements ILivingRoomRpc {
 
 
     @Resource
     ILivingRoomService livingRoomService;
+
+    @Override
+    public List<Long> queryUserIdsByRoomId(LivingRoomReqDTO livingRoomReqDTO) {
+        return livingRoomService.queryUserIdsByRoomId(livingRoomReqDTO);
+    }
 
     @Override
     public PageWrapper<LivingRoomRespDTO> list(LivingRoomReqDTO livingRoomReqDTO) {

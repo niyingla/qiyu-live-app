@@ -20,7 +20,6 @@ public class IHomePageServiceImpl implements IHomePageService {
     @Override
     public HomePageVO initPage(Long userId) {
         UserDTO userDTO = userRpc.getByUserId(userId);
-        System.out.println(userDTO);
         HomePageVO homePageVO = new HomePageVO();
         homePageVO.setLoginStatus(false);
         if (userId != null) {

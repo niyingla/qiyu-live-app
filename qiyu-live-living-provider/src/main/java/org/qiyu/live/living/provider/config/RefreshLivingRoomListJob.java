@@ -44,10 +44,10 @@ public class RefreshLivingRoomListJob implements InitializingBean {
             //这把锁等他自动过期
             Boolean lockStatus = redisTemplate.opsForValue().setIfAbsent(cacheKey, 1, 1L, TimeUnit.SECONDS);
             if (lockStatus) {
-                LOGGER.info("[RefreshLivingRoomListJob] starting  更新数据库中记录的直播间到Redis中去");
+//                LOGGER.info("[RefreshLivingRoomListJob] starting  更新数据库中记录的直播间到Redis中去");
                 refreshDBTiRedis(LivingRoomTypeEnum.DEFAULT_LIVING_ROOM.getCode());
                 refreshDBTiRedis(LivingRoomTypeEnum.PK_LIVING_ROOM.getCode());
-                LOGGER.info("[RefreshLivingRoomListJob] end  更新数据库中记录的直播间到Redis中去");
+//                LOGGER.info("[RefreshLivingRoomListJob] end  更新数据库中记录的直播间到Redis中去");
             }
         }
     }

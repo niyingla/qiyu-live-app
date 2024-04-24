@@ -19,14 +19,12 @@ public class LivingRoomController {
 
     @PostMapping("/list")
     public WebResponseVO list(LivingRoomReqVO livingRoomReqVO) {
-        System.out.println("进入list");
         if (livingRoomReqVO == null || livingRoomReqVO.getType() == null) {
             return WebResponseVO.errorParam("需要给定直播间类型");
         }
         if (livingRoomReqVO.getPage() <= 0 || livingRoomReqVO.getPageSize() > 100) {
             return WebResponseVO.errorParam("分页查询参数错误");
         }
-        System.out.println("执行list");
         return WebResponseVO.success(livingRoomService.list(livingRoomReqVO));
     }
 
@@ -47,7 +45,6 @@ public class LivingRoomController {
             return WebResponseVO.errorParam("需要给定直播间id");
         }
         boolean status = livingRoomService.closeLiving(roomId);
-        System.out.println(status);
         if (status) {
             return WebResponseVO.success();
         }
@@ -58,7 +55,6 @@ public class LivingRoomController {
     public WebResponseVO anchorConfig(Integer roomId) {
         Long userId = QiyuRequestContext.getUserId();
         WebResponseVO success = WebResponseVO.success(livingRoomService.anchorConfig(userId, roomId));
-        System.out.println(success);
         return success;
     }
 }
