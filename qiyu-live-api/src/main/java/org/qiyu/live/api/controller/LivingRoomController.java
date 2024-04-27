@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import org.qiyu.live.api.service.ILivingRoomService;
 import org.qiyu.live.api.vo.LivingRoomInitVO;
 import org.qiyu.live.api.vo.req.LivingRoomReqVO;
+import org.qiyu.live.api.vo.req.OnlinePKReqVO;
 import org.qiyu.live.common.interfaces.vo.WebResponseVO;
 import org.qiyu.live.web.starter.context.QiyuRequestContext;
 import org.qiyu.live.web.starter.error.BizBaseErrorEnum;
@@ -35,6 +36,12 @@ public class LivingRoomController {
         LivingRoomInitVO livingRoomInitVO = new LivingRoomInitVO();
         livingRoomInitVO.setRoomId(roomId);
         return WebResponseVO.success(livingRoomInitVO);
+    }
+    @PostMapping("/onlinePk")
+    @RequestLimit(limit = 1, second = 3, msg = "请求过于频繁，请稍后再试")
+    public WebResponseVO onlinePk(OnlinePKReqVO onlinePKReqVO){
+        ErrorAssert.isNotNull(onlinePKReqVO.getRoomId(), BizBaseErrorEnum.PARAM_ERROR);
+        return WebResponseVO.success(livingRoomService.onlinePK(onlinePKReqVO));
     }
     @RequestLimit(limit = 1, second = 10, msg = "关播请求过于频繁，请稍后再试")
     @PostMapping("/closeLiving")

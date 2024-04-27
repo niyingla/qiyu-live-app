@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 @Service
 public class IGiftServiceImpl implements IGiftService {
@@ -51,7 +52,9 @@ public class IGiftServiceImpl implements IGiftService {
         LOGGER.info("进入send方法");
         int giftId = giftReqVO.getGiftId();
         //map集合，判断本地是否有对象，如果有就返回，如果没有就rpc调用，同时注入到本地map中
-        GiftConfigDTO   giftConfigDTO = giftConfigRpc.getByGiftId(giftId);
+        GiftConfigDTO giftConfigDTO= giftConfigDTOCache.get(giftId, integer -> {
+            return giftConfigRpc.getByGiftId(giftId);
+        });
         ErrorAssert.isNotNull(giftConfigDTO, QiyuApiError.GIFT_CONFIG_ERROR);
         ErrorAssert.isTure(!giftReqVO.getReceiverId().equals(giftReqVO.getSenderUserId()), QiyuApiError.NOT_SEND_TO_YOURSELF);
         SendGiftMq sendGiftMq = new SendGiftMq();

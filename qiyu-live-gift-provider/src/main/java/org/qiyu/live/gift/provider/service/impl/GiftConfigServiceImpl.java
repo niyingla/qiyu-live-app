@@ -43,29 +43,36 @@ public class GiftConfigServiceImpl implements IGiftConfigService {
     @Override
     public List<GiftConfigDTO> queryGiftList() {
         String cacheKey = cacheKeyBuilder.buildGiftListCacheKey();
-        List<GiftConfigDTO> giftConfigDTOS = redisTemplate.opsForList().range(cacheKey, 0, -1).stream().map(x -> (GiftConfigDTO) x).collect(Collectors.toList());
-        if (!CollectionUtils.isEmpty(giftConfigDTOS)) {
-            if (giftConfigDTOS.get(0).getGiftId() == null) {
-                return Collections.emptyList();
+        //礼物的列表数据不会特别多，直接进行list的全量便利
+        List<GiftConfigDTO> cacheList = redisTemplate.opsForList().range(cacheKey, 0, 100).stream()
+                .map(x -> (GiftConfigDTO) x).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(cacheList)) {
+            //不是空list缓存
+            if (cacheList.get(0).getGiftId() != null) {
+                redisTemplate.expire(cacheKey, 60, TimeUnit.MINUTES);
+                return cacheList;
             }
-            return giftConfigDTOS;
+            return Collections.emptyList();
         }
+        //如果为空：一种是空值缓存（放了一个空的list集合），另一种是缓存过期了
+        //list集合去进行存放
         LambdaQueryWrapper<GiftConfigPO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(GiftConfigPO::getStatus, CommonStatusEum.VALID_STATUS.getCode());
         List<GiftConfigPO> giftConfigPOList = giftConfigMapper.selectList(queryWrapper);
-        giftConfigDTOS = ConvertBeanUtils.convertList(giftConfigPOList, GiftConfigDTO.class);
-        if (CollectionUtils.isEmpty(giftConfigDTOS)) {
-            redisTemplate.opsForList().leftPush(cacheKey, new GiftConfigDTO());
-            redisTemplate.expire(cacheKey, 1L, TimeUnit.MINUTES);
-            return Collections.emptyList();
+        if (!CollectionUtils.isEmpty(giftConfigPOList)) {
+            List<GiftConfigDTO> resultList = ConvertBeanUtils.convertList(giftConfigPOList, GiftConfigDTO.class);
+            boolean trySetToRedis = redisTemplate.opsForValue().setIfAbsent(cacheKeyBuilder.buildGiftListLockCacheKey(),1,3,TimeUnit.SECONDS);
+            if(trySetToRedis) {
+                redisTemplate.opsForList().leftPushAll(cacheKey, resultList.toArray());
+                //大部分情况下，一个直播间的有效时间大概就是60min以上
+                redisTemplate.expire(cacheKey, 60, TimeUnit.MINUTES);
+            }
+            return resultList;
         }
-        // 往Redis初始化List时，要上锁，避免重复写入造成数据重复
-        Boolean isLock = redisTemplate.opsForValue().setIfAbsent(cacheKeyBuilder.buildGiftListLockCacheKey(), 1, 3L, TimeUnit.SECONDS);
-        if (Boolean.TRUE.equals(isLock)) {
-            redisTemplate.opsForList().leftPushAll(cacheKey, giftConfigDTOS.toArray());
-            redisTemplate.expire(cacheKey, 30L, TimeUnit.MINUTES);
-        }
-        return giftConfigDTOS;
+        //存入一个空的list进入redis中
+        redisTemplate.opsForList().leftPush(cacheKey, new GiftConfigDTO());
+        redisTemplate.expire(cacheKey, 5, TimeUnit.MINUTES);
+        return Collections.emptyList();
     }
 
     @Override
