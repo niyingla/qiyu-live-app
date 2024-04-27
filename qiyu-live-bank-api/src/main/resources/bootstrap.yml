@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: qiyu-live-bank-api
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 192.168.138.1:8848
+        namespace: qiyu-live-test
+        ip: 192.168.138.129
+      config:
+        import-check:
+          enabled: false
+        file-extension: yaml
+        server-addr: 192.168.138.1:8848
+        namespace: qiyu-live-test
+        group: DEFAULT_GROUP
+  config:
+    import:
+      - optional:nacos:${spring.application.name}.yaml

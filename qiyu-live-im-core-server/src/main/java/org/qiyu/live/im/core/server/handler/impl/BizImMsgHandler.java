@@ -26,6 +26,7 @@ public class BizImMsgHandler implements SimplyHandler {
 
     @Override
     public void handler(ChannelHandlerContext ctx, ImMsg imMsg) {
+        LOGGER.info("BizImMsgHandler begin");
         //前期的参数校验
         Long userId = ImContextUtils.getUserId(ctx);
         Integer appId = ImContextUtils.getAppId(ctx);

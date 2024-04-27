@@ -29,10 +29,10 @@ public class IMsgAckCheckServiceImpl implements IMsgAckCheckService {
 
     @Override
     public void doMsgAck(ImMsgBody imMsgBody) {
+        LOGGER.info("进入doMsgAck");
         String key = cacheKeyBuilder.buildImAckMapKey(imMsgBody.getUserId(), imMsgBody.getAppId());
-        System.out.println("doMsgAck="+key+imMsgBody.getMsgId());
+        LOGGER.info("进入doMsgAck的key为："+key);
         System.out.println("delete="+redisTemplate.opsForHash().delete(key, imMsgBody.getMsgId()));;
-        System.out.println("删除成功");
         redisTemplate.expire(key,30, TimeUnit.MINUTES);
     }
 
@@ -56,7 +56,6 @@ public class IMsgAckCheckServiceImpl implements IMsgAckCheckService {
         //等级1 -> 1s，等级2 -> 5s
         message.setDelayTimeLevel(1);
         try {
-            System.out.println("sendDelayMsg-------------");
             SendResult sendResult = mqProducer.send(message);
             LOGGER.info("[MsgAckCheckServiceImpl] msg is {},sendResult is {}", json, sendResult);
         } catch (Exception e) {
@@ -69,7 +68,6 @@ public class IMsgAckCheckServiceImpl implements IMsgAckCheckService {
     @Override
     public int getMsgAckTimes(String msgId, Long userId, int appId) {
         String key = cacheKeyBuilder.buildImAckMapKey(userId, appId);
-        System.out.println("getMsgAckTimes="+key+msgId);
         Object value = redisTemplate.opsForHash().get(key, msgId);
 
         if (value == null) {

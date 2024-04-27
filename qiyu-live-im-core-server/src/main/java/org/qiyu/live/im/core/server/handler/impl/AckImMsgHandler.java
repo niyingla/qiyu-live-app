@@ -12,13 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-/**
- * 登出消息的处理逻辑统一收拢到这个类中
- *
- * @Author idea
- * @Date: Created in 20:40 2023/7/6
- * @Description
- */
+
 @Component
 public class AckImMsgHandler implements SimplyHandler {
 
@@ -29,13 +23,13 @@ public class AckImMsgHandler implements SimplyHandler {
 
     @Override
     public void handler(ChannelHandlerContext ctx, ImMsg imMsg) {
+        LOGGER.info("进入handler");
         Long userId = ImContextUtils.getUserId(ctx);
         Integer appid = ImContextUtils.getAppId(ctx);
         if (userId == null && appid == null) {
             ctx.close();
             throw new IllegalArgumentException("attr is error");
         }
-        System.out.println("触发handler");
         msgAckCheckService.doMsgAck(JSON.parseObject(imMsg.getBody(), ImMsgBody.class));
     }
 }

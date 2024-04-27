@@ -25,6 +25,7 @@ public class TcpImServerCoreHandler extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
+        System.out.println("进入TcpImServerCoreHandler");
         if(!(msg instanceof ImMsg)) {
             throw new IllegalArgumentException("error msg, msg is :" + msg);
         }

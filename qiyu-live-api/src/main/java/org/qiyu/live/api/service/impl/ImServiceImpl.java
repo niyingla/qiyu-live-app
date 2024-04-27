@@ -24,7 +24,6 @@ public class ImServiceImpl implements ImService {
 
     @Override
     public ImConfigVO getImConfig() {
-        System.out.println("getImConfig service impl");
         ImConfigVO imConfigVO = new ImConfigVO();
         String token = imTokenRpc.createImLoginToken(QiyuRequestContext.getUserId(), AppIdEnum.QIYU_LIVE_BIZ.getCode());
         imConfigVO.setToken(token);

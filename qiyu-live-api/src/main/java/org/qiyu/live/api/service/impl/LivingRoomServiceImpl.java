@@ -62,18 +62,15 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
 
     @Override
     public LivingRoomInitVO anchorConfig(Long userId, Integer roomId) {
-        System.out.println("roomId======="+roomId);
         LivingRoomRespDTO respDTO = livingRoomRpc.queryByRoomId(roomId);
         UserDTO userDTO = userRpc.getByUserId(userId);
         LivingRoomInitVO respVO = new LivingRoomInitVO();
         respVO.setUserId(userId);
         respVO.setNickName(userDTO.getNickName());
-        System.out.println("respDTO===="+respDTO);
         if (respDTO == null || respDTO.getAnchorId() == null || userId == null) {
             respVO.setAnchor(false);
             respVO.setRoomId(-1);
         }else {
-
             respVO.setAnchor(respDTO.getAnchorId().equals(userId));
             respVO.setAnchorId(respDTO.getAnchorId());
             respVO.setRoomId(respDTO.getId());

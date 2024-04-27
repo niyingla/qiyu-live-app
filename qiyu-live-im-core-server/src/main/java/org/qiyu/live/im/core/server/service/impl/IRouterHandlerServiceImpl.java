@@ -32,10 +32,12 @@ public class IRouterHandlerServiceImpl implements IRouterHandlerService {
     public boolean sendMsgToClient(ImMsgBody imMsgBody) {
         Long userId = imMsgBody.getUserId();
         ChannelHandlerContext ctx = ChannelHandlerContextCache.get(userId);
+        System.out.println(userId+"-----"+ctx);
         if (ctx != null) {
             String msgId = UUID.randomUUID().toString();
             imMsgBody.setMsgId(msgId);
             ImMsg respMsg = ImMsg.build(ImMsgCodeEnum.IM_BIZ_MSG.getCode(), JSON.toJSONString(imMsgBody));
+            System.out.println("回写的消息为："+respMsg);
             ctx.writeAndFlush(respMsg);
             return true;
         }

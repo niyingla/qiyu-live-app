@@ -1,0 +1,6 @@
+[2024-04-25 11:24:28.578 -ERROR] o.a.d.c.r.GlobalResourcesRepository      : [DUBBO] Creating global shared handler ..., dubbo version: 3.2.0-beta.3, current host: 192.168.138.1
+[2024-04-25 21:02:51.561 -ERROR] o.a.d.c.r.GlobalResourcesRepository      : [DUBBO] Creating global shared handler ..., dubbo version: 3.2.0-beta.3, current host: 192.168.138.1
+[2024-04-25 23:27:43.194 -ERROR] o.a.d.c.r.GlobalResourcesRepository      : [DUBBO] Creating global shared handler ..., dubbo version: 3.2.0-beta.3, current host: 192.168.138.1
+[2024-04-25 23:42:52.902 -ERROR] o.a.d.c.r.GlobalResourcesRepository      : [DUBBO] Creating global shared handler ..., dubbo version: 3.2.0-beta.3, current host: 192.168.138.1
+[2024-04-25 23:44:58.405 -ERROR] o.a.d.c.r.GlobalResourcesRepository      : [DUBBO] Creating global shared handler ..., dubbo version: 3.2.0-beta.3, current host: 192.168.138.1
+[2024-04-25 23:45:44.366 -ERROR] o.a.d.c.r.GlobalResourcesRepository      : [DUBBO] Creating global shared handler ..., dubbo version: 3.2.0-beta.3, current host: 192.168.138.1

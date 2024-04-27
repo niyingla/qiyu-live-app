@@ -34,10 +34,12 @@ public class HomePageController {
         Long userId = QiyuRequestContext.getUserId();
         HomePageVO homePageVO = new HomePageVO();
         homePageVO.setLoginStatus(false);
+        System.out.println(userId);
         if (userId != null) {
             homePageVO = homePageService.initPage(userId);
             homePageVO.setLoginStatus(true);
         }
+        System.out.println(homePageVO);
         return WebResponseVO.success(homePageVO);
     }
 }

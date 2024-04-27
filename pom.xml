@@ -32,6 +32,9 @@
         <module>qiyu-live-living-provider</module>
         <module>qiyu-live-gift-interface</module>
         <module>qiyu-live-gift-provider</module>
+        <module>qiyu-live-bank-interface</module>
+        <module>qiyu-live-bank-provider</module>
+        <module>qiyu-live-bank-api</module>
     </modules>
 
     <properties>

@@ -27,11 +27,14 @@ public class ImRouterServiceImpl implements ImRouterService {
 
     @Override
     public boolean sendMsg(ImMsgBody imMsgBody) {
-        String bindAddress = stringRedisTemplate.opsForValue().get(ImCoreServerConstants.IM_BIND_IP_KEY + imMsgBody.getAppId() + ":" + imMsgBody.getUserId());
+        String cacheKey= ImCoreServerConstants.IM_BIND_IP_KEY + imMsgBody.getAppId() + ":" + imMsgBody.getUserId();
+        System.out.println(cacheKey);
+        String bindAddress = stringRedisTemplate.opsForValue().get(cacheKey);
+        System.out.println("bindAddress="+bindAddress);
         if (StringUtils.isEmpty(bindAddress)) {
             return false;
         }
-        bindAddress=bindAddress.substring(bindAddress.indexOf("%"));
+        bindAddress=bindAddress.substring(0,bindAddress.indexOf("%"));
         RpcContext.getContext().set("ip", bindAddress);
         routerHandlerRpc.sendMsg(imMsgBody);
         return true;
