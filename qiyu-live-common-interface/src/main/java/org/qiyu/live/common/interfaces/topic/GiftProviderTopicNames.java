@@ -11,4 +11,8 @@ public class GiftProviderTopicNames {
      * 发送礼物消息
      */
     public static final String SEND_GIFT = "send_gift";
+    /**
+     * 抢红包消息
+     */
+    public static final String RECEIVE_RED_PACKET = "receive-red-packet";
 }

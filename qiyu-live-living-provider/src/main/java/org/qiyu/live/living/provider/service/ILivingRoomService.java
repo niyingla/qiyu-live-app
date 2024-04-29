@@ -11,7 +11,10 @@ import java.util.List;
 
 public interface ILivingRoomService {
 
-
+    /**
+     * 根据主播id查询直播间
+     */
+    LivingRoomRespDTO queryByAnchorId(Long anchorId);
 
 
 

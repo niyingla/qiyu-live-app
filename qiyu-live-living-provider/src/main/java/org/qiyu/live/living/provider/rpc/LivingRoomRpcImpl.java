@@ -44,6 +44,11 @@ public class LivingRoomRpcImpl implements ILivingRoomRpc {
     }
 
     @Override
+    public LivingRoomRespDTO queryByAnchorId(Long anchorId) {
+        return livingRoomService.queryByAnchorId(anchorId);
+    }
+
+    @Override
     public LivingPkRespDTO onlinePK(LivingRoomReqDTO livingRoomReqDTO) {
         return livingRoomService.onlinePK(livingRoomReqDTO);
     }

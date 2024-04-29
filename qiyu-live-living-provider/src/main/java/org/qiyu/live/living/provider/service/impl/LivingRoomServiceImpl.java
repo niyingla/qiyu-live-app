@@ -59,6 +59,15 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
     ImRouterRpc imRouterRpc;
 
     @Override
+    public LivingRoomRespDTO queryByAnchorId(Long anchorId) {
+        LambdaQueryWrapper<LivingRoomPO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(LivingRoomPO::getAnchorId, anchorId);
+        queryWrapper.eq(LivingRoomPO::getStatus, CommonStatusEum.VALID_STATUS.getCode());
+        queryWrapper.last("limit 1");
+        return  ConvertBeanUtils.convert(livingRoomMapper.selectOne(queryWrapper),LivingRoomRespDTO.class);
+    }
+
+    @Override
     public List<Long> queryUserIdsByRoomId(LivingRoomReqDTO livingRoomReqDTO) {
         Integer roomId = livingRoomReqDTO.getRoomId();
         Integer appId = livingRoomReqDTO.getAppId();

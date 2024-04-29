@@ -8,8 +8,13 @@ import org.qiyu.live.api.vo.req.LivingRoomReqVO;
 import org.qiyu.live.api.vo.req.OnlinePKReqVO;
 import org.qiyu.live.api.vo.resp.LivingRoomPageRespVO;
 import org.qiyu.live.api.vo.resp.LivingRoomRespVO;
+import org.qiyu.live.api.vo.resp.RedPacketReceiveVO;
 import org.qiyu.live.common.interfaces.ConvertBeanUtils;
 import org.qiyu.live.common.interfaces.dto.PageWrapper;
+import org.qiyu.live.gift.dto.RedPacketConfigReqDTO;
+import org.qiyu.live.gift.dto.RedPacketConfigRespDTO;
+import org.qiyu.live.gift.dto.RedPacketReceiveDTO;
+import org.qiyu.live.gift.rpc.IRedPacketConfigRpc;
 import org.qiyu.live.im.constants.AppIdEnum;
 import org.qiyu.live.living.interfaces.dto.LivingPkRespDTO;
 import org.qiyu.live.living.interfaces.dto.LivingRoomReqDTO;
@@ -18,6 +23,7 @@ import org.qiyu.live.living.interfaces.rpc.ILivingRoomRpc;
 import org.qiyu.live.user.dto.UserDTO;
 import org.qiyu.live.user.interfaces.rpc.IUserRpc;
 import org.qiyu.live.web.starter.context.QiyuRequestContext;
+import org.qiyu.live.web.starter.error.BizBaseErrorEnum;
 import org.qiyu.live.web.starter.error.ErrorAssert;
 import org.qiyu.live.web.starter.error.QiyuErrorException;
 import org.springframework.stereotype.Service;
@@ -34,6 +40,9 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
 
     @DubboReference
     private IUserRpc userRpc;
+
+    @DubboReference
+    private IRedPacketConfigRpc redPacketConfigRpc;
 
     @Override
     public LivingRoomPageRespVO list(LivingRoomReqVO livingRoomReqVO) {
@@ -52,6 +61,45 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         LivingPkRespDTO tryOnlineStatus = livingRoomRpc.onlinePK(reqDTO);
         ErrorAssert.isTure(tryOnlineStatus.isOnlineStatus(), new QiyuErrorException(-1,tryOnlineStatus.getMsg()));
         return true;
+    }
+
+    @Override
+    public Boolean prepareRedPacket(Long userId, Integer roomId) {
+        LivingRoomRespDTO livingRoomRespDTO = livingRoomRpc.queryByRoomId(roomId);
+        System.out.println(livingRoomRespDTO+"userid is"+userId+"roomid is "+roomId);
+        ErrorAssert.isNotNull(livingRoomRespDTO, BizBaseErrorEnum.PARAM_ERROR);
+        ErrorAssert.isTure(userId.equals(livingRoomRespDTO.getAnchorId()), BizBaseErrorEnum.PARAM_ERROR);
+        System.out.println("进入rpc");
+        return redPacketConfigRpc.prepareRedPacket(userId);
+    }
+
+    @Override
+    public Boolean startRedPacket(Long userId, String code) {
+        RedPacketConfigReqDTO reqDTO = new RedPacketConfigReqDTO();
+        reqDTO.setUserId(userId);
+        reqDTO.setRedPacketConfigCode(code);
+        LivingRoomRespDTO respDTO = livingRoomRpc.queryByAnchorId(userId);
+        System.out.println(respDTO);
+        System.out.println(userId+"--------code is"+code);
+        ErrorAssert.isNotNull(respDTO,BizBaseErrorEnum.PARAM_ERROR);
+        reqDTO.setRoomId(respDTO.getId());
+        return redPacketConfigRpc.startRedPacket(reqDTO);
+    }
+
+    @Override
+    public RedPacketReceiveVO getRedPacket(Long userId, String redPacketConfigCode) {
+        RedPacketConfigReqDTO redPacketConfigReqDTO = new RedPacketConfigReqDTO();
+        redPacketConfigReqDTO.setUserId(userId);
+        redPacketConfigReqDTO.setRedPacketConfigCode(redPacketConfigCode);
+        RedPacketReceiveDTO receiveDTO = redPacketConfigRpc.receiveRedPacket(redPacketConfigReqDTO);
+        RedPacketReceiveVO redPacketReceiveVO = new RedPacketReceiveVO();
+        if(receiveDTO==null){
+            redPacketReceiveVO.setMsg("红包派发完毕");
+        }else{
+            redPacketReceiveVO.setPrice(receiveDTO.getPrice());
+            redPacketReceiveVO.setMsg(receiveDTO.getNotifyMsg());
+        }
+        return redPacketReceiveVO;
     }
 
 
@@ -106,15 +154,24 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         //给定一个默认的头像
         respVO.setAvatar(StringUtils.isEmpty(anchor.getAvatar())?"https://s1.ax1x.com/2022/12/18/zb6q6f.png":anchor.getAvatar());
         respVO.setWatcherAvatar(watcher.getAvatar());
+        respVO.setDefaultBgImg("https://s1.ax1x.com/2022/12/18/zb6q6f.png");
         if (respDTO == null || respDTO.getAnchorId() == null || userId == null) {
             //这种就是属于直播间已经不存在的情况了
             respVO.setRoomId(-1);
+            return respVO;
         } else {
+            boolean isAnchorId = respDTO.getAnchorId().equals(userId);
             respVO.setRoomId(respDTO.getId());
             respVO.setAnchorId(respDTO.getAnchorId());
-            respVO.setAnchor(respDTO.getAnchorId().equals(userId));
+            respVO.setAnchor(isAnchorId);
+            if(isAnchorId){
+                RedPacketConfigRespDTO redPacketConfigRespDTO = redPacketConfigRpc.queryByAnchorId(userId);
+                if(redPacketConfigRespDTO!=null){
+                    respVO.setRedPacketConfigCode(redPacketConfigRespDTO.getConfigCode());
+                }
+            }
         }
-        respVO.setDefaultBgImg("http://127.0.0.1:5501/img/head.jpeg\n");
+
         return respVO;
     }
 
