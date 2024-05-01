@@ -63,7 +63,6 @@ public class LivingRoomController {
     @RequestLimit(limit = 1, second = 10, msg = "正在初始化红包数据，请稍等")
     @PostMapping("/prepareRedPacket")
     public WebResponseVO prepareRedPacket(LivingRoomReqVO livingRoomReqVO) {
-        System.out.println("进入prepareRedPacket");
         return WebResponseVO.success(livingRoomService.prepareRedPacket(QiyuRequestContext.getUserId(), livingRoomReqVO.getRoomId()));
     }
 

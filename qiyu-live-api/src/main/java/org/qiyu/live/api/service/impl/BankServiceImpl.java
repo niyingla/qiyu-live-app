@@ -89,7 +89,6 @@ public class BankServiceImpl implements IBankService {
         HashMap<String,String> paramMap = new HashMap<>();
         paramMap.put("param",jsonObject.toJSONString());
         ResponseEntity<String> resultEntity = restTemplate.postForEntity("http://localhost:8201/live/bank/payNotify/wxNotify?param={param}", null, String.class,paramMap);
-        System.out.println(resultEntity.getBody());
         return payProductRespVO;
     }
 

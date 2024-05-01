@@ -1,14 +1,21 @@
 package org.qiyu.live.living.provider.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.rocketmq.client.exception.MQBrokerException;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.client.producer.MQProducer;
+import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.idea.qiyu.live.framework.redis.starter.key.LivingProviderCacheKeyBuilder;
 import org.qiyu.live.common.interfaces.ConvertBeanUtils;
 import org.qiyu.live.common.interfaces.dto.PageWrapper;
 import org.qiyu.live.common.interfaces.enums.CommonStatusEum;
+import org.qiyu.live.common.interfaces.topic.GiftProviderTopicNames;
 import org.qiyu.live.im.constants.AppIdEnum;
 import org.qiyu.live.im.core.server.interfaces.dto.ImOfflineDTO;
 import org.qiyu.live.im.core.server.interfaces.dto.ImOnlineDTO;
@@ -57,6 +64,9 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
 
     @DubboReference
     ImRouterRpc imRouterRpc;
+
+    @Resource
+    MQProducer mqProducer;
 
     @Override
     public LivingRoomRespDTO queryByAnchorId(Long anchorId) {
@@ -189,7 +199,18 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         livingRoomMapper.insert(livingRoomPO);
         String cacheKey = cacheKeyBuilder.buildLivingRoomObj(livingRoomPO.getId());
         redisTemplate.delete(cacheKey);
+        startLivingRoomMq(livingRoomPO);
         return livingRoomPO.getId();
+    }
+    public void startLivingRoomMq(LivingRoomPO livingRoomPO){
+        Message message = new Message();
+        message.setBody(JSON.toJSONBytes(livingRoomPO));
+        message.setTopic(GiftProviderTopicNames.START_LIVING_ROOM);
+        try {
+            mqProducer.send(message);
+        }  catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
