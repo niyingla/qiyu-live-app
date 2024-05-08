@@ -46,13 +46,13 @@ public class ShopInfoServiceImpl implements IShopInfoService {
         System.out.println("queryByAnchorId");
         LivingRoomRespDTO respDTO = livingRoomRpc.queryByRoomId(roomId);
         Long anchorId = respDTO.getAnchorId();
-        System.out.println("anchorId="+anchorId);
-        return ConvertBeanUtils.convertList(skuInfoRpc.queryByAnchorId(anchorId),SkuInfoVO.class);
+        System.out.println("anchorId=" + anchorId);
+        return ConvertBeanUtils.convertList(skuInfoRpc.queryByAnchorId(anchorId), SkuInfoVO.class);
     }
 
     @Override
     public SkuDetailInfoVO detail(SkuInfoReqVO skuInfoReqVO) {
-        return ConvertBeanUtils.convert(skuInfoRpc.queryBySkuId(skuInfoReqVO.getSkuId(),skuInfoReqVO.getAnchorId()),SkuDetailInfoVO.class);
+        return ConvertBeanUtils.convert(skuInfoRpc.queryBySkuId(skuInfoReqVO.getSkuId(), skuInfoReqVO.getAnchorId()), SkuDetailInfoVO.class);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ShopInfoServiceImpl implements IShopInfoService {
         ShopCarReqDTO reqDTO = ConvertBeanUtils.convert(reqVO, ShopCarReqDTO.class);
         reqDTO.setUserId(QiyuRequestContext.getUserId());
         ShopCarRespDTO carInfo = shopCarRpc.getCarInfo(reqDTO);
-        if(carInfo==null) return null;
+        if (carInfo == null) return null;
         ShopCarRespVO convert = ConvertBeanUtils.convert(carInfo, ShopCarRespVO.class);
         convert.setShopCarItemRespDTOS(carInfo.getSkuCarItemRespDTODTOS());
         return convert;
