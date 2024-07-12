@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
@@ -16,7 +15,6 @@ import org.qiyu.live.bank.dto.AccountTradeRespDTO;
 import org.qiyu.live.bank.rpc.QiyuCurrencyAccountRpc;
 import org.qiyu.live.common.interfaces.dto.SendGiftMq;
 import org.qiyu.live.common.interfaces.topic.GiftProviderTopicNames;
-import org.qiyu.live.common.interfaces.topic.ImCoreServerProviderTopicNames;
 import org.qiyu.live.framework.mq.starter.properties.RocketMQConsumerProperties;
 import org.qiyu.live.gift.constans.SendGiftTypeEnum;
 import org.qiyu.live.im.constants.AppIdEnum;
@@ -63,10 +61,10 @@ public class SendGiftConsumer implements InitializingBean {
 
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
-    
+
     @Resource
     private GiftProviderCacheKeyBuilder cacheKeyBuilder;
-    
+
     @DubboReference
     QiyuCurrencyAccountRpc qiyuCurrencyAccountRpc;
 
