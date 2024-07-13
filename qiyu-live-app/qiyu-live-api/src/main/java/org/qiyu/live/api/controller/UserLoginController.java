@@ -21,7 +21,8 @@ public class UserLoginController {
 
     //发送验证码
     @PostMapping("/sendLoginCode")
-    public WebResponseVO sendLoginCode(String phone) {return userLoginService.sendLoginCode(phone);
+    public WebResponseVO sendLoginCode(String phone) {
+        return userLoginService.sendLoginCode(phone);
     }
 
     //登录请求 验证码是否合法 -> 初始化注册/老用户登录
