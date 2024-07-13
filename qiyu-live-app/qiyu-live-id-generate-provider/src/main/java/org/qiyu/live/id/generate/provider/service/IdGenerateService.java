@@ -1,5 +1,7 @@
 package org.qiyu.live.id.generate.provider.service;
 
+import org.qiyu.live.id.generate.provider.dao.po.IdGeneratePO;
+
 public interface IdGenerateService {
     /**
      * 获取有序id
@@ -16,4 +18,6 @@ public interface IdGenerateService {
      * @return
      */
     Long getUnSeqId(Integer id);
+
+    void insertIdGeneratePO(IdGeneratePO idGeneratePO);
 }

@@ -9,7 +9,8 @@ package org.qiyu.live.common.interfaces.enums;
  */
 public enum GatewayHeaderEnum {
 
-    USER_LOGIN_ID("用户id","qiyu_gh_user_id");
+    USER_LOGIN_ID("用户id","qiyu_gh_user_id"),
+    ;
 
     String desc;
     String name;

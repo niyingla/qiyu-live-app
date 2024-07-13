@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -163,9 +160,45 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
         List<IdGeneratePO> idGeneratePOList = idGenerateMapper.selectAll();
         for (IdGeneratePO idGeneratePO : idGeneratePOList) {
             LOGGER.info("服务刚启动，抢占新的id段");
-            tryUpdateMySQLRecord(idGeneratePO);
-            semaphoreMap.put(idGeneratePO.getId(), new Semaphore(1));
+            //切换到下一个id段
+            nextIdGen(idGeneratePO);
         }
+    }
+
+    /**
+     * 插入新的id段
+     *
+     * @param idGeneratePO
+     */
+    @Override
+    public void insertIdGeneratePO(IdGeneratePO idGeneratePO) {
+        if (Objects.isNull(idGeneratePO)){
+            return;
+        }
+        if (Objects.isNull(idGeneratePO.getCurrentStart()) ||
+                Objects.isNull(idGeneratePO.getStep()) ||
+                Objects.isNull(idGeneratePO.getIdPrefix()) ||
+                Objects.isNull(idGeneratePO.getIsSeq())) {
+            throw new RuntimeException("idGeneratePO param error");
+        }
+        idGeneratePO.setInitNum(idGeneratePO.getCurrentStart());
+        idGeneratePO.setNextThreshold(idGeneratePO.getCurrentStart() + idGeneratePO.getStep());
+        idGeneratePO.setVersion(1);
+        idGeneratePO.setCreateTime(new Date());
+        idGeneratePO.setUpdateTime(new Date());
+        idGenerateMapper.insert(idGeneratePO);
+
+        nextIdGen(idGeneratePO);
+    }
+
+    /**
+     * 服务刚启动，抢占新的id段
+     *
+     * @param idGeneratePO
+     */
+    private void nextIdGen(IdGeneratePO idGeneratePO) {
+        tryUpdateMySQLRecord(idGeneratePO);
+        semaphoreMap.put(idGeneratePO.getId(), new Semaphore(1));
     }
 
     /**
