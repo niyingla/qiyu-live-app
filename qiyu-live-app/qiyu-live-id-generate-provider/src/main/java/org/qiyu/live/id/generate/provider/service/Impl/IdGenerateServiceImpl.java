@@ -105,7 +105,9 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
                     @Override
                     public void run() {
                         try {
+                            //从数据库中获取最新的id段
                             IdGeneratePO idGeneratePO = idGenerateMapper.selectById(localSeqIdBO.getId());
+                            //尝试进行更新
                             tryUpdateMySQLRecord(idGeneratePO);
                         } catch (Exception e) {
                             LOGGER.error("[refreshLocalSeqId] error is ", e);
