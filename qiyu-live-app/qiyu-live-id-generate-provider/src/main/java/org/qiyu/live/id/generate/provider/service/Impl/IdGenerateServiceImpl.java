@@ -72,7 +72,9 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
             LOGGER.error("[getSeqId] localSeqIdBO is null,id is {}", id);
             return null;
         }
+        //刷新本地有序id段
         this.refreshLocalSeqId(localSeqIdBO);
+        //获取下一个id
         long returnId = localSeqIdBO.getCurrentNum().incrementAndGet();
         if (returnId > localSeqIdBO.getNextThreshold()) {
             //同步去刷新
