@@ -13,6 +13,10 @@ public class ChannelHandlerContextCache {
      */
     private static String SERVER_IP_ADDRESS = "";
 
+    /**
+     * 关联客户nettyChannel
+     * key userId value channel
+     */
     private static Map<Long, ChannelHandlerContext> channelHandlerContextMap = new HashMap<>();
 
     public static String getServerIpAddress() {
