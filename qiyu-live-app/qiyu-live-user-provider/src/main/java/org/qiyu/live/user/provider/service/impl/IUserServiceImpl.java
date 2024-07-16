@@ -73,7 +73,8 @@ public class IUserServiceImpl implements IUserService {
     public boolean updateUserInfo(UserDTO userDTO) {
         if (userDTO == null || userDTO.getUserId() == null) {
             return false;
-        }int updateStatus = userMapper.updateById(ConvertBeanUtils.convert(userDTO, UserPO.class));
+        }
+        int updateStatus = userMapper.updateById(ConvertBeanUtils.convert(userDTO, UserPO.class));
         if (updateStatus > -1) {
             String key = userProviderCacheKeyBuilder.buildUserInfoKey(userDTO.getUserId());
             redisTemplate.delete(key);
