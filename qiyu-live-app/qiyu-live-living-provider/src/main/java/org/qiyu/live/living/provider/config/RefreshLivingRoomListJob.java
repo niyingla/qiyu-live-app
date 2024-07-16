@@ -18,16 +18,16 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class RefreshLivingRoomListJob implements InitializingBean {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshLivingRoomListJob.class);
-    
+
     @Resource
     private ILivingRoomService livingRoomService;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
     @Resource
     private LivingProviderCacheKeyBuilder cacheKeyBuilder;
-    
+
     private static final ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR = new ScheduledThreadPoolExecutor(1);
 
 
@@ -36,7 +36,7 @@ public class RefreshLivingRoomListJob implements InitializingBean {
         //一秒钟刷新一次直播间列表数据
         SCHEDULED_THREAD_POOL_EXECUTOR.scheduleWithFixedDelay(new RefreshCacheListJob(), 3000, 1000, TimeUnit.MILLISECONDS);
     }
-    
+
     class RefreshCacheListJob implements Runnable{
         @Override
         public void run() {
@@ -53,6 +53,10 @@ public class RefreshLivingRoomListJob implements InitializingBean {
     }
 
 
+    /**
+     * 定时执行刷新数据到缓存
+     * @param type
+     */
     private void refreshDBTiRedis(Integer type) {
         String cacheKey = cacheKeyBuilder.buildLivingRoomList(type);
         List<LivingRoomRespDTO> resultList = livingRoomService.listAllLivingRoomFromDB(type);

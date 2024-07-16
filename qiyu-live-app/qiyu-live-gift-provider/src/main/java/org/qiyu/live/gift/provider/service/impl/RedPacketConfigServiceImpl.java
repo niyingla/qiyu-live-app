@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
-
 import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
@@ -34,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -116,7 +116,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
         //redis 缓冲区
         List<List<Integer>> lists = ListUtils.splistList(redPacketPriceList, 100);
 
-        for (List<Integer> list:lists){
+        for (List<Integer> list : lists) {
             redisTemplate.opsForList().leftPushAll(cacheKey, list.toArray());
         }
         redisTemplate.expire(cacheKey,1,TimeUnit.DAYS);
@@ -214,7 +214,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
      * @param totalCount
      * @return
      */
-    private  List<Integer> createRedPacketPriceList(Integer totalPrice, Integer totalCount) {
+    private List<Integer> createRedPacketPriceList(Integer totalPrice, Integer totalCount) {
         List<Integer> redPacketPriceList = new ArrayList<>(totalCount);
         for (int i = 0; i < totalCount; i++) {
             if (i + 1 == totalCount) {
@@ -222,13 +222,23 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
                 redPacketPriceList.add(totalPrice);
                 break;
             }
-            int maxLimit = (totalPrice / (totalCount - i)) * 2;// 最大限额为平均值的两倍
-            int currentPrice = ThreadLocalRandom.current().nextInt(1, maxLimit);
+            int maxLimit = (totalPrice / (totalCount - i)) * 2;// 最大限额为平均值的2倍
+            int currentPrice;
+            do {
+                currentPrice = ThreadLocalRandom.current().nextInt(1, maxLimit);
+            }
+            //防止出现负值，出现时循环执行
+            while (totalPrice - currentPrice <= 0);
+            //总额扣减
             totalPrice -= currentPrice;
+            //加入红包列表
             redPacketPriceList.add(currentPrice);
         }
+        //打乱顺序
+        Collections.shuffle(redPacketPriceList);
         return redPacketPriceList;
     }
+
     /**
      * 批量发送im消息
      */

@@ -5,11 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import jakarta.annotation.Resource;
 import org.qiyu.live.im.core.server.common.ChannelHandlerContextCache;
-import org.qiyu.live.im.core.server.common.ImContextAttr;
 import org.qiyu.live.im.core.server.common.ImContextUtils;
 import org.qiyu.live.im.core.server.common.ImMsg;
 import org.qiyu.live.im.core.server.handler.ImHandlerFactory;
-import org.qiyu.live.im.core.server.handler.impl.ImHandlerFactoryImpl;
 import org.qiyu.live.im.core.server.interfaces.constans.ImCoreServerConstants;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -23,6 +21,12 @@ public class TcpImServerCoreHandler extends SimpleChannelInboundHandler {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
 
+    /**
+     * 处理read 事件
+     * @param channelHandlerContext
+     * @param msg
+     * @throws Exception
+     */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
         System.out.println("进入TcpImServerCoreHandler");

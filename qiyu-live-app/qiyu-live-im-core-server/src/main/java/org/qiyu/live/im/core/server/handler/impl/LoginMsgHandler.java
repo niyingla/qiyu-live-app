@@ -102,6 +102,7 @@ public class LoginMsgHandler implements SimplyHandler {
         sendLoginMQ(userId,appId,roomId);
         ctx.writeAndFlush(respMsg);
     }
+
     private void sendLoginMQ(Long userId, Integer appId, Integer roomId) {
         ImOnlineDTO imOnlineDTO = new ImOnlineDTO();
         imOnlineDTO.setUserId(userId);
