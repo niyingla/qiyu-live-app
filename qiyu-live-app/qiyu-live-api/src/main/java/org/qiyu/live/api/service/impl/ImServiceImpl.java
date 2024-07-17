@@ -32,10 +32,12 @@ public class ImServiceImpl implements ImService {
     }
 
     private void getImServerAddress(ImConfigVO imConfigVO){
+        //获取当前服务的所有实例
         List<ServiceInstance> serviceInstances = discoveryClient.getInstances("qiyu-live-im-core-server");
+        //乱序
         Collections.shuffle(serviceInstances);
         ServiceInstance instance = serviceInstances.get(0);
-
+        //设置im服务地址
         imConfigVO.setWsImServerAddress(instance.getHost() + ":8086");
         imConfigVO.setTcpImServerAddress(instance.getHost() + ":8085");
 

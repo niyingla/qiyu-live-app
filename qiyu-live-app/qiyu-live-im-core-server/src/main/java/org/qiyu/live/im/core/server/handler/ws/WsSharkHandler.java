@@ -65,6 +65,7 @@ public class WsSharkHandler extends ChannelInboundHandlerAdapter {
     private void handlerHttpRequest(ChannelHandlerContext ctx, FullHttpRequest msg) {
         System.out.println("进入handlerHttpRequest");
         String serverIp = environment.getProperty("DUBBO_IP_TO_REGISTRY");
+        //用于Web长连接通讯的URL。例如，“ws://myhost.com/mypath”。后续的Web长连接内容会发送到这个URL。
         String webSocketUrl = "ws://" + serverIp + ":" + port;
         // 构造握手响应返回
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(webSocketUrl, null, false);
