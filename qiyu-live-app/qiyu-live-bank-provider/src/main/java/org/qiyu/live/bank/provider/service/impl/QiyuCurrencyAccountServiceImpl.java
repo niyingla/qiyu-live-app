@@ -64,6 +64,12 @@ public class QiyuCurrencyAccountServiceImpl implements QiyuCurrencyAccountServic
 
     }
 
+    /**
+     * 扣减余额
+     * 缓存扣除成功后，异步更新余额和流水
+     * @param userId
+     * @param num
+     */
     @Override
     public void decr(Long userId, int num) {
 //        String cacheKey = cacheKeyBuilder.buildUserBalance(userId);
@@ -74,6 +80,7 @@ public class QiyuCurrencyAccountServiceImpl implements QiyuCurrencyAccountServic
             redisTemplate.opsForValue().decrement(cacheKey, num);
             redisTemplate.expire(cacheKey, 5, TimeUnit.MINUTES);
         }
+        //异步线程池中完成数据库层的扣减和流水记录插入操作，带有事务
         threadPoolExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -105,13 +112,15 @@ public class QiyuCurrencyAccountServiceImpl implements QiyuCurrencyAccountServic
     public AccountTradeRespDTO consumeForSendGift(AccountTradeReqDTO accountTradeReqDTO) {
         //余额判断
         long userId = accountTradeReqDTO.getUserId();
-        int num=accountTradeReqDTO.getNum();
+        int num= accountTradeReqDTO.getNum();
         Integer balance = this.getBalance(userId);
-        System.out.println("userId="+userId);
+        System.out.println("userId=" + userId);
         System.out.println(balance);
-        if(balance==null || balance<num){
+        //判断缓存余额
+        if (balance == null || balance < num) {
             return AccountTradeRespDTO.buildFail(userId,"账户余额不足",1);
         }
+
         this.decr(userId,num);
         //扣减余额
         return AccountTradeRespDTO.buildSuccess(userId,"消费成功");
