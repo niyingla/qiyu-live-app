@@ -19,13 +19,13 @@ public class UserController {
     private IUserRpc userRpc;
 
     @GetMapping(value = "/getUsesrInfo")
-    public UserDTO getUsesrInfo(Long id){
-        UserDTO userDTO=userRpc.getByUserId(id);
+    public UserDTO getUserInfo(Long id){
+        UserDTO userDTO = userRpc.getByUserId(id);
         return userDTO;
     }
 
     @GetMapping(value = "/updateUserInfo")
-    public boolean getUserInfo(Long id,String nickName){
+    public boolean updateUserInfo(Long id,String nickName){
         UserDTO userDTO = new UserDTO();
         userDTO.setUserId(id);
         userDTO.setNickName(nickName);

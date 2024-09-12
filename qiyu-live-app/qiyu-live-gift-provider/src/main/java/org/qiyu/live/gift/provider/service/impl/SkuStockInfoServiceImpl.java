@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import jakarta.annotation.Resource;
 import org.idea.qiyu.live.framework.redis.starter.key.GiftProviderCacheKeyBuilder;
 import org.qiyu.live.common.interfaces.enums.CommonStatusEum;
-import org.qiyu.live.gift.bo.RollBackStockBO;
 import org.qiyu.live.gift.constans.SkuOrderInfoEnum;
 import org.qiyu.live.gift.dto.RollBackStockDTO;
 import org.qiyu.live.gift.dto.SkuOrderInfoReqDTO;

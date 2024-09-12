@@ -18,7 +18,9 @@ public class DESUtils {
     public static final String KEY_ALGORITHM = "DES";
     // 算法名称/加密模式/填充方式
     // DES共有四种工作模式-->>ECB：电子密码本模式、CBC：加密分组链接模式、CFB：加密反馈模式、OFB：输出反馈模式
+    // DES共有五种填充模式-->>NoPadding、ZerosPadding、PKCS5Padding、ISO10126Padding
     public static final String CIPHER_ALGORITHM = "DES/ECB/PKCS5Padding";
+    // 密钥
     public static final String PUBLIC_KEY = "BAS9j2C3D4E5F60708";
 
     /**
@@ -32,14 +34,21 @@ public class DESUtils {
      * @throws Exception
      */
     private static SecretKey keyGenerator(String keyStr) throws Exception {
+        //转换公钥成字节数组
         byte input[] = HexString2Bytes(keyStr);
+        //实例化DES密钥规则
         DESKeySpec desKey = new DESKeySpec(input);
         // 创建一个密匙工厂，然后用它把DESKeySpec转换成
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-        SecretKey securekey = keyFactory.generateSecret(desKey);
-        return securekey;
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
+        // 生成密钥
+        return keyFactory.generateSecret(desKey);
     }
 
+    /**
+     * 将十六进制字符串转换为字节数组
+     * @param c
+     * @return
+     */
     private static int parse(char c) {
         if (c >= 'a')
             return (c - 'a' + 10) & 0x0f;
@@ -48,7 +57,11 @@ public class DESUtils {
         return (c - '0') & 0x0f;
     }
 
-    // 从十六进制字符串到字节数组转换
+    /**
+     * 从十六进制字符串到字节数组转换
+     * @param hexstr
+     * @return
+     */
     public static byte[] HexString2Bytes(String hexstr) {
         byte[] b = new byte[hexstr.length() / 2];
         int j = 0;
