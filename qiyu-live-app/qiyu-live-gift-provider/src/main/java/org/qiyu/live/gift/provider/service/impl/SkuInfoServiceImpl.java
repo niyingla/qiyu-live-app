@@ -19,7 +19,7 @@ public class SkuInfoServiceImpl implements ISkuInfoService {
 
     @Override
     public List<SkuInfoPO> queryBySkuIds(List<Long> skuIdList) {
-        if(skuIdList.size()==0){
+        if(skuIdList.isEmpty()){
             return null;
         }
         System.out.println("skuIdList==="+skuIdList);
